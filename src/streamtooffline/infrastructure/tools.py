@@ -54,6 +54,7 @@ class Toolchain:
         if name == "yt-dlp":
             venv_bin = "Scripts" if self.platform_name.lower() == "windows" else "bin"
             candidates.append(self.root / ".venv" / venv_bin / executable)
+            candidates.append(self.root / ".tools" / "yt-dlp" / venv_bin / executable)
         return tuple(candidates)
 
     def locate(self, name: str) -> ToolStatus:

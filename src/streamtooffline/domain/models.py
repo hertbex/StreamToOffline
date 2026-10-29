@@ -113,6 +113,8 @@ class Candidate:
     bitrate_kbps: int | None = None
     sample_rate_hz: int | None = None
     peer: str | None = None
+    upload_speed_kbps: float | None = None
+    has_free_upload_slot: bool | None = None
 
     def __post_init__(self) -> None:
         if self.size_bytes <= 0 or self.duration_seconds <= 0:

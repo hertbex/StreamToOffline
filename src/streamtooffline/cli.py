@@ -70,6 +70,8 @@ def build_parser() -> argparse.ArgumentParser:
     doctor = sub.add_parser("doctor")
     doctor.add_argument("--root", type=Path, default=Path.cwd())
     doctor.add_argument("--install-ffmpeg", action="store_true")
+    doctor.add_argument("--install-sockseek", action="store_true")
+    doctor.add_argument("--fix", action="store_true")
     for name in ("song", "csv", "playlist"):
         command = sub.add_parser(name)
         command.add_argument("source", help="Artist - Title, CSV path, or Spotify playlist URL")
@@ -102,9 +104,22 @@ def profile_from_args(args) -> DownloadProfile:
     return replace(profile, **changes)
 
 
-def _locate_required_tools(root: Path) -> dict[str, Path]:
+def _locate_required_tools(
+    root: Path,
+    *,
+    require_ffmpeg: bool = True,
+    require_sockseek: bool = True,
+    require_ytdlp: bool = True,
+) -> dict[str, Path]:
     tools = Toolchain(root)
-    required = {name: tools.locate(name) for name in ("sockseek", "ffmpeg", "yt-dlp")}
+    names = []
+    if require_ffmpeg:
+        names.append("ffmpeg")
+    if require_sockseek:
+        names.append("sockseek")
+    if require_ytdlp:
+        names.append("yt-dlp")
+    required = {name: tools.locate(name) for name in names}
     missing = [name for name, status in required.items() if not status.available]
     if missing:
         raise RuntimeError(f"Missing tools: {', '.join(missing)}")
@@ -116,23 +131,36 @@ def make_sockseek(root: Path, username: str | None, password: str | None) -> Soc
     password = password or os.getenv("SOULSEEK_PASSWORD")
     if not username or not password:
         raise RuntimeError("Soulseek credentials are required for Soulseek search")
-    paths = _locate_required_tools(root)
+    paths = _locate_required_tools(root, require_ffmpeg=False, require_ytdlp=False)
     return SockseekClient(SockseekConfig(
         paths["sockseek"], username, password, root / ".state" / "tmp",
     ))
 
 
-def make_service_with_credentials(root: Path, username: str | None, password: str | None) -> tuple[DownloadService, JobStore]:
+def make_service_with_credentials(
+    root: Path,
+    username: str | None,
+    password: str | None,
+    *,
+    youtube_fallback: bool = True,
+) -> tuple[DownloadService, JobStore]:
     username = username or os.getenv("SOULSEEK_USERNAME")
     password = password or os.getenv("SOULSEEK_PASSWORD")
-    paths = _locate_required_tools(root)
+    paths = _locate_required_tools(
+        root,
+        require_sockseek=bool(username and password),
+        require_ytdlp=youtube_fallback,
+    )
     store = JobStore(root / ".state" / "jobs.sqlite3")
     sockseek = (
         SockseekClient(SockseekConfig(paths["sockseek"], username, password, root / ".state" / "tmp"))
         if username and password else _UnavailableSockseek()
     )
     processor = AudioProcessor(paths["ffmpeg"])
-    fallback = YouTubeFallback(paths["yt-dlp"], paths["ffmpeg"])
+    fallback = (
+        YouTubeFallback(paths["yt-dlp"], paths["ffmpeg"])
+        if youtube_fallback else None
+    )
     rules = MetadataRules.load(
         root / "config" / "artists.yml",
         root / "config" / "genres.yml",
@@ -142,7 +170,9 @@ def make_service_with_credentials(root: Path, username: str | None, password: st
 
 
 def make_service(root: Path, args) -> tuple[DownloadService, JobStore]:
-    return make_service_with_credentials(root, args.username, None)
+    return make_service_with_credentials(
+        root, args.username, None, youtube_fallback=args.youtube_fallback,
+    )
 
 
 def run_tracks(
@@ -160,13 +190,6 @@ def run_tracks(
 ) -> int:
     if youtube_fallback:
         profile = replace(profile, youtube_fallback=True)
-    has_username = bool(username or os.getenv("SOULSEEK_USERNAME"))
-    has_password = bool(password or os.getenv("SOULSEEK_PASSWORD"))
-    if (not has_username or not has_password) and not profile.youtube_fallback:
-        raise RuntimeError(
-            "Soulseek login/password are not configured. Enable YouTube fallback or set "
-            "SOULSEEK_USERNAME and SOULSEEK_PASSWORD."
-        )
     if not username:
         username = os.getenv("SOULSEEK_USERNAME")
     if not password:
@@ -179,7 +202,9 @@ def run_tracks(
         if not profile.youtube_fallback:
             raise RuntimeError("Soulseek login/password are required unless YouTube fallback is enabled.")
         print("Soulseek credentials not set; using YouTube fallback only.")
-    service, store = make_service_with_credentials(root, username, password)
+    service, store = make_service_with_credentials(
+        root, username, password, youtube_fallback=profile.youtube_fallback,
+    )
     try:
         output_path = Path(output)
         if job_name:
@@ -229,9 +254,14 @@ def _execute(
         elif event.status == "completed":
             downloaded += event.size_bytes
             elapsed = max(0.001, time.monotonic() - started)
-            eta = LibraryPlanner.transfer_seconds(max(0, estimate.min_bytes - downloaded), downloaded / elapsed)
+            speed = downloaded / elapsed
+            eta = LibraryPlanner.transfer_seconds(max(0, estimate.min_bytes - downloaded), speed)
             eta_text = format_duration(eta) if eta is not None else "unknown"
-            print(f"  OK {format_bytes(event.size_bytes)}; ETA {eta_text} {event.message}")
+            print(
+                f"  OK {format_bytes(event.size_bytes)}; total {format_bytes(downloaded)}; "
+                f"speed {format_bytes(int(speed))}/s; elapsed {format_duration(int(elapsed))}; "
+                f"ETA {eta_text} {event.message}"
+            )
         else:
             print(f"  FAILED: {event.message}")
 
@@ -249,6 +279,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.command == "doctor":
         toolchain = Toolchain(args.root)
+        if args.fix:
+            from .infrastructure.tool_fixer import ToolFixer
+            ToolFixer(args.root, toolchain.platform_name).fix(progress=print)
+            toolchain = Toolchain(args.root)
         statuses = toolchain.doctor()
         for status in statuses:
             print(f"{status.name:12} {'OK' if status.available else 'MISSING':7} {status.path or 'not found'}")
@@ -262,15 +296,32 @@ def main(argv: Sequence[str] | None = None) -> int:
                     return 0
             from .infrastructure.ffmpeg_installer import FFmpegInstaller
             print(FFmpegInstaller.instructions(toolchain.platform_name))
+        sockseek_status = next((s for s in statuses if s.name == "sockseek"), None)
+        if not sockseek_status or not sockseek_status.available:
+            if args.install_sockseek:
+                from .infrastructure.sockseek_installer import SockseekInstaller
+                installer = SockseekInstaller(args.root, toolchain.platform_name)
+                installer.install(progress=print)
+                return 0
+            from .infrastructure.sockseek_installer import SockseekInstaller
+            print(SockseekInstaller.instructions(toolchain.platform_name))
         return 0 if all(status.available for status in statuses) else 1
     if args.command in {None, "wizard"}:
-        from .wizard import run_wizard
-        return run_wizard(args)
+        from .tui import run_tui
+        return run_tui(Path(args.root))
 
     if args.command == "retry":
-        service, store = make_service(args.root, args)
+        store = JobStore(args.root / ".state" / "jobs.sqlite3")
         try:
             job = store.load_job(args.job_id)
+            service, service_store = make_service_with_credentials(
+                args.root,
+                args.username,
+                None,
+                youtube_fallback=job.profile.youtube_fallback,
+            )
+            store.close()
+            store = service_store
             return execute(job, args, service, store)
         finally:
             store.close()
@@ -291,8 +342,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         server = ExportifyImportServer()
         server.start()
         try:
-            playlist_id = urlparse(args.source).path.rstrip("/").split("/")[-1]
-            launcher.start(callback_url=server.url, playlist_id=playlist_id)
+            launcher.start(callback_url=server.url)
             print("Waiting for Exportify to send the playlist...")
             payload = server.wait(timeout=600)
             if payload is None:

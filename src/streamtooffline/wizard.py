@@ -40,8 +40,8 @@ def _ask_yn(prompt: str, default: bool = False) -> bool:
 
 
 def _validate_url(value: str) -> str | None:
-    if "open.spotify.com/playlist/" not in value:
-        return "Expected a Spotify playlist URL like https://open.spotify.com/playlist/..."
+    if "open.spotify.com/playlist/" not in value and "open.spotify.com/album/" not in value:
+        return "Expected a Spotify playlist or album URL."
     return None
 
 
@@ -211,8 +211,9 @@ def _source_playlist(root: Path, username: str | None) -> int:
         allow_skip=options["youtube_fallback"],
         required=not options["youtube_fallback"],
     )
-    playlist_id = url.split("/playlist/", 1)[1].split("?", 1)[0].split("/", 1)[0]
-    tracks, playlist_name = _run_exportify(root, playlist_id)
+    marker = "/playlist/" if "/playlist/" in url else "/album/"
+    playlist_id = url.split(marker, 1)[1].split("?", 1)[0].split("/", 1)[0]
+    tracks, playlist_name = _run_exportify(root)
     if not tracks:
         print("No tracks received.")
         return 1

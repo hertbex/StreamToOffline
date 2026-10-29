@@ -148,6 +148,7 @@ class CandidateSelector:
         )
 
     def ranked(self, track: Track, candidates: Iterable[Candidate], profile: DownloadProfile) -> tuple[Candidate, ...]:
+        candidates = tuple(candidates)
         report = self.diagnose(track, candidates, profile)
         return tuple(
             sorted(
@@ -187,7 +188,7 @@ class CandidateSelector:
             return is_edit
         return not is_remix and not is_edit and not self.UNSUPPORTED_ORIGINAL.search(location)
 
-    def _rank(self, track: Track, candidate: Candidate, profile: DownloadProfile) -> tuple[int, int, int, int]:
+    def _rank(self, track: Track, candidate: Candidate, profile: DownloadProfile) -> tuple[int, int, int, int, int, int]:
         if candidate.format is profile.format:
             format_score = 4
         elif profile.format is MediaFormat.AUTO:
@@ -198,4 +199,6 @@ class CandidateSelector:
             format_score = 1
         quality_score = 1000 if candidate.format.is_lossless else candidate.bitrate_kbps or 0
         duration_score = -abs(candidate.duration_seconds - track.duration_seconds)
-        return format_score, quality_score, duration_score, -candidate.size_bytes
+        slot_score = 1 if candidate.has_free_upload_slot else 0
+        speed_score = round(candidate.upload_speed_kbps or 0)
+        return format_score, quality_score, slot_score, speed_score, duration_score, -candidate.size_bytes

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import csv
-from io import TextIOBase
+from io import StringIO, TextIOBase
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -42,15 +42,39 @@ class ExportifyCsvReader:
             text = source.read()
         else:
             text = source
-        lines = text.splitlines()
-        if not lines:
+        if not text.strip():
             raise ValueError("CSV file is empty")
-        header = next(csv.reader([lines[0]], strict=True))
+        try:
+            rows = csv.reader(StringIO(text), strict=True)
+            header = next(rows)
+            parsed_rows = [(row, rows.line_num) for row in rows]
+        except csv.Error:
+            return self._read_legacy_rows(text)
         indices = {name: self._find_column(header, aliases) for name, aliases in self._aliases().items()}
         for required in ("artist", "title"):
             if indices[required] is None:
                 raise ValueError(f"Required CSV column is missing: {required}")
 
+        tracks: list[Track] = []
+        errors: list[CsvError] = []
+        for row, line_number in parsed_rows:
+            if not any(value.strip() for value in row):
+                continue
+            try:
+                if len(row) != len(header):
+                    raise ValueError(f"Expected {len(header)} columns, got {len(row)}")
+                tracks.append(self._track_from_row(row, indices))
+            except (ValueError, csv.Error) as exc:
+                errors.append(CsvError(line_number, str(exc)))
+        return CsvImportResult(tuple(tracks), tuple(errors))
+
+    def _read_legacy_rows(self, text: str) -> CsvImportResult:
+        lines = text.splitlines()
+        header = next(csv.reader([lines[0]], strict=True))
+        indices = {name: self._find_column(header, aliases) for name, aliases in self._aliases().items()}
+        for required in ("artist", "title"):
+            if indices[required] is None:
+                raise ValueError(f"Required CSV column is missing: {required}")
         tracks: list[Track] = []
         errors: list[CsvError] = []
         for line_number, raw_line in enumerate(lines[1:], start=2):

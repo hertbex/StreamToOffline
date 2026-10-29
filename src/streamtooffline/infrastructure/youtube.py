@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import subprocess
 import os
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
@@ -14,6 +15,13 @@ from .ffmpeg import QualityIntegrityError
 class YouTubeResult:
     path: Path
     warning: str
+
+
+@dataclass(frozen=True, slots=True)
+class YouTubeSearchResult:
+    title: str
+    channel: str
+    duration_seconds: int
 
 
 class YouTubeFallback:
@@ -38,7 +46,9 @@ class YouTubeFallback:
             raise QualityIntegrityError("YouTube fallback supports Auto or MP3 output only")
 
         destination.parent.mkdir(parents=True, exist_ok=True)
-        query = f"ytsearch1:{track.artist} - {track.title}"
+        # The first YouTube hit is often a radio edit, live version, or a short
+        # skit. Search several results so the duration filter can find a match.
+        query = f"ytsearch5:{track.artist} - {track.title}"
         command = [
             str(self.executable), query, "--ffmpeg-location", str(self.ffmpeg_executable),
             "-f", "bestaudio/best", "--no-playlist", "--quiet", "--no-warnings",
@@ -59,8 +69,47 @@ class YouTubeFallback:
         completed = self.runner(command, capture_output=True, text=True, encoding="utf-8", timeout=900)
         output = completed.stdout.strip().splitlines()
         produced = Path(output[-1]) if output else destination
-        if completed.returncode != 0 or not produced.is_file():
-            raise RuntimeError(f"YouTube download failed: {(completed.stderr or 'no output file')[-500:]}")
+        if completed.returncode != 0:
+            detail = (completed.stderr or completed.stdout or "unknown error").strip()
+            raise RuntimeError(f"YouTube download failed: {detail[-500:]}")
+        if not produced.is_file():
+            detail = "no matching result was downloaded"
+            if track.duration_seconds and profile.length_tolerance_seconds is not None:
+                detail += f" within {profile.length_tolerance_seconds}s of the requested duration"
+            raise RuntimeError(f"YouTube download failed: {detail}")
         return YouTubeResult(produced, self.WARNING)
 
     WARNING = "YouTube provides lossy audio; container bitrate/sample rate does not represent original studio quality"
+
+    def search(self, track: Track, limit: int = 5) -> tuple[YouTubeSearchResult, ...]:
+        completed = self.runner(
+            [
+                str(self.executable),
+                f"ytsearch{limit}:{track.artist} - {track.title}",
+                "--flat-playlist",
+                "--dump-single-json",
+                "--skip-download",
+                "--no-warnings",
+            ],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            timeout=120,
+        )
+        if completed.returncode:
+            detail = (completed.stderr or completed.stdout or "unknown error").strip()
+            raise RuntimeError(f"YouTube search failed: {detail[-500:]}")
+        try:
+            payload = json.loads(completed.stdout)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError("YouTube search returned invalid data") from exc
+        results = []
+        for entry in payload.get("entries", ()):
+            if not entry or not entry.get("title"):
+                continue
+            results.append(YouTubeSearchResult(
+                title=str(entry["title"]),
+                channel=str(entry.get("channel") or entry.get("uploader") or "unknown channel"),
+                duration_seconds=int(entry.get("duration") or 0),
+            ))
+        return tuple(results)

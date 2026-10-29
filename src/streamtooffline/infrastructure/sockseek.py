@@ -84,6 +84,17 @@ class SockseekClient:
                     candidates.append(candidate)
         return tuple(candidates)
 
+    def check_credentials(self) -> str:
+        """Check authentication by issuing a harmless empty-result search."""
+        completed = self._run(
+            self._base_command("title=streamtooffline-credential-check", None)
+            + ["--input-type", "string", "--print-json-full"],
+            self.config.search_timeout,
+        )
+        if completed.returncode not in (0, 1):
+            raise SockseekError("Soulseek rejected the credentials")
+        return "Soulseek responded successfully; credentials are accepted."
+
     def search_query(self, query: str, profile: DownloadProfile) -> Sequence[Candidate]:
         queries = [query]
         if "=" not in query:
@@ -110,14 +121,20 @@ class SockseekClient:
             raise SockseekError("Soulseek candidate has no peer")
         destination.parent.mkdir(parents=True, exist_ok=True)
         link = f"slsk://{candidate.peer}/{candidate.location.replace(chr(92), '/')}"
+        before = {
+            path.resolve()
+            for path in destination.parent.rglob("*")
+            if path.is_file()
+        }
         command = self._base_command(link, None) + [
             "--no-write-index", "--name-format", destination.stem, "-o", str(destination.parent),
+            "--max-stale-time", "120000", "--max-retries", "3",
         ]
         self._run(command, self.config.download_timeout)
         if not destination.is_file():
             staged = [
                 path for path in destination.parent.rglob(f"*{destination.suffix}")
-                if path.is_file() and path != destination
+                if path.is_file() and path != destination and path.resolve() not in before
             ]
             exact_size = [path for path in staged if path.stat().st_size == candidate.size_bytes]
             if exact_size:
@@ -183,6 +200,8 @@ class SockseekClient:
                     size_bytes=payload.file.size, duration_seconds=payload.file.length,
                     format=media_format, bitrate_kbps=payload.file.bitrate,
                     sample_rate_hz=payload.file.sample_rate, peer=payload.user.username,
+                    upload_speed_kbps=payload.user.upload_speed,
+                    has_free_upload_slot=payload.user.has_free_upload_slot,
                 ))
             except (ValidationError, ValueError):
                 continue

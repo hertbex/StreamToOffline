@@ -1,6 +1,10 @@
 .tools/
 .venv/
+.state/
+credentials.json
+.state/credentials.json
 __pycache__/
 *.pyc
 .env
 artifacts/*.log
+library/

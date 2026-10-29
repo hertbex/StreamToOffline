@@ -19,13 +19,14 @@ class AdaptiveBucket:
 
 class AdaptiveLibrary:
     def __init__(self, rules_path: Path | None = None) -> None:
-        self.rules_path = rules_path or Path(__file__).parents[2] / "config" / "adaptive.yml"
+        self.rules_path = rules_path or Path(__file__).parents[3] / "config" / "adaptive.yml"
         data = yaml.safe_load(self.rules_path.read_text(encoding="utf-8")) or {}
         self.genre_rules = data.get("genre_rules", [])
         self.mood_rules = data.get("mood_rules", [])
         self.fallback = data.get("fallback", "Other")
         self.min_tracks = data.get("min_tracks", 3)
         self.buckets: list[AdaptiveBucket] = []
+        self._counts: dict[str, int] = {}
 
     def build(self, tracks: Iterable[Track]) -> "AdaptiveLibrary":
         track_list = tuple(tracks)
@@ -34,6 +35,7 @@ class AdaptiveLibrary:
             category = self._classify_all_rules(track)
             counts[category] = counts.get(category, 0) + 1
         active = {name for name, count in counts.items() if count >= self.min_tracks}
+        self._counts = counts
         if counts.get(self.fallback, 0) > 0:
             active.add(self.fallback)
         self.buckets = [
@@ -71,7 +73,7 @@ class AdaptiveLibrary:
         return self.fallback
 
     def preview(self) -> list[tuple[str, int]]:
-        return [(bucket.name, 0) for bucket in self.buckets]
+        return [(bucket.name, self._counts.get(bucket.name, 0)) for bucket in self.buckets]
 
     @staticmethod
     def _genre_matches(track: Track, keywords: tuple[str, ...]) -> bool:

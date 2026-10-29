@@ -29,3 +29,7 @@ def test_adaptive_mood_fallback_for_unknown_genre():
     )
     lib.build(tracks)
     assert lib.classify(tracks[0]) == "Chill"
+
+
+def test_adaptive_uses_repository_default_config():
+    assert AdaptiveLibrary().fallback == "Other"

@@ -22,6 +22,8 @@
    - 54 теста.
 10. ✅ **Документация** — добавлен `README.md` с инструкциями, меню и примерами.
 11. ✅ **Кроссплатформенность и финальная полировка** — `start.sh` для Linux/macOS, тесты Toolchain на Linux/Darwin (имена без `.exe`, venv `bin/`, plain `pnpm`), платформенные инструкции FFmpeg в README, очистка smoke-артефактов; 56 тестов.
+12. ✅ **TUI-интерфейс** — интерактивный Textual-мастер с клавиатурной/мышиной навигацией, формами загрузки, retry, doctor и фоновым выполнением операций.
+13. ✅ **Sockseek bootstrap** — pinned Windows x64 release v3.0.6, SHA-256 verification, `doctor --install-sockseek` and repository-local `.tools/bin/sockseek.exe`.
 
 ## Could have: Telegram-бот
 

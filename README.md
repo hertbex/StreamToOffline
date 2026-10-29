@@ -5,10 +5,10 @@
 ## Быстрый старт
 
 1. Открой папку проекта (например, `D:\StreamToOffline`).
-2. Запусти мастер:
+2. Запусти TUI-мастер:
    - **Windows:** `Start.bat`
    - **Linux/macOS:** `./start.sh`
-3. Выбери источник, профиль качества и папку назначения.
+3. Выбери источник, профиль качества и папку назначения клавишами или мышью.
 4. Музыка сохраняется в `library` внутри папки проекта.
 
 ## Меню
@@ -22,8 +22,8 @@
 0. Exit
 ```
 
-- В любом вводе можно набрать `q` и нажать Enter, чтобы вернуться в меню.
-- Ошибочный ввод (несуществующий файл, неверный URL) проверяется сразу.
+Интерфейс работает в терминале как TUI: используй Tab/стрелки для навигации и Enter для выбора. Клавиша `q` закрывает приложение.
+Ошибочный ввод показывается отдельным окном, длительные операции выполняются в фоне.
 
 ## Источники
 
@@ -83,6 +83,25 @@
 ```powershell
 .\.venv\Scripts\streamtooffline.exe doctor --install-ffmpeg
 ```
+
+Sockseek is an external executable, not a PyPI package. On Windows install the
+pinned release into `.tools/bin` with:
+
+```powershell
+.\.venv\Scripts\streamtooffline.exe doctor --install-sockseek
+```
+
+The installer verifies the archive checksum. On Linux/macOS, download the
+matching Sockseek release and set `SOCKSEEK_PATH` to its executable.
+
+To automatically install/fix all repository-managed tools (FFmpeg, Sockseek,
+yt-dlp, pnpm and Exportify), run:
+
+```powershell
+.\.venv\Scripts\streamtooffline.exe doctor --fix
+```
+
+The TUI button **Check / fix tools** runs the same repair flow.
 
 На Linux/macOS `doctor` подскажет команду пакетного менеджера (`apt install ffmpeg` / `brew install ffmpeg`).
 

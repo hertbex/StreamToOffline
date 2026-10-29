@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from mutagen.flac import FLAC
-from mutagen.id3 import APIC, ID3, TALB, TCON, TIT2, TPE1
+from mutagen.id3 import APIC, ID3, ID3NoHeaderError, TALB, TCON, TIT2, TPE1
 
 from streamtooffline.domain.models import DownloadProfile, Track
 
@@ -22,7 +22,7 @@ class TagWriter:
     def _write_mp3(path: Path, track: Track, profile: DownloadProfile) -> None:
         try:
             tags = ID3(path)
-        except Exception:
+        except ID3NoHeaderError:
             tags = ID3()
         if not profile.keep_artwork:
             tags.delall("APIC")

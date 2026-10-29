@@ -56,3 +56,9 @@ def test_reader_rejects_missing_required_column(tmp_path):
 def test_reader_accepts_text_stream_from_http_callback():
     result = ExportifyCsvReader().read(StringIO(HEADER + "spotify:track:1,Artist,Title,Album,1000,rock\n"))
     assert result.tracks[0].display_name == "Artist - Title"
+
+
+def test_reader_supports_newlines_inside_quoted_fields():
+    text = HEADER + 'spotify:track:1,Artist,"Title\npart",Album,1000,rock\n'
+    result = ExportifyCsvReader().read(StringIO(text))
+    assert result.tracks[0].title == "Title\npart"

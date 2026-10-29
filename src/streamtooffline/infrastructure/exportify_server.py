@@ -14,6 +14,8 @@ class ExportifyImport:
 
 
 class _Handler(BaseHTTPRequestHandler):
+    MAX_BODY_BYTES = 10 * 1024 * 1024
+
     def __init__(self, callback: Callable[[ExportifyImport], None], event: threading.Event, *args, **kwargs) -> None:
         self.callback = callback
         self.event = event
@@ -39,8 +41,25 @@ class _Handler(BaseHTTPRequestHandler):
             self._cors_headers()
             self.end_headers()
             return
-        length = int(self.headers.get("Content-Length", "0"))
-        body = self.rfile.read(length).decode("utf-8")
+        try:
+            length = int(self.headers.get("Content-Length", ""))
+        except (TypeError, ValueError):
+            self.send_response(400)
+            self._cors_headers()
+            self.end_headers()
+            return
+        if length < 0 or length > self.MAX_BODY_BYTES:
+            self.send_response(413 if length > self.MAX_BODY_BYTES else 400)
+            self._cors_headers()
+            self.end_headers()
+            return
+        try:
+            body = self.rfile.read(length).decode("utf-8")
+        except UnicodeDecodeError:
+            self.send_response(400)
+            self._cors_headers()
+            self.end_headers()
+            return
         query_filename = parse_qs(parsed.query).get("filename", [None])[0]
         filename = unquote(query_filename or self.headers.get("X-Playlist-Filename", "playlist.csv"))
         try:

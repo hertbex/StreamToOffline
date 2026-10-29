@@ -7,7 +7,7 @@ name = "streamtooffline"
 version = "0.1.0"
 description = "Offline music library builder with Soulseek and optional YouTube fallback"
 requires-python = ">=3.11"
-dependencies = ["yt-dlp==2026.10.26", "pydantic>=2.12,<3", "PyYAML>=6.0,<7", "mutagen>=1.47,<2"]
+dependencies = ["yt-dlp==2026.10.26", "pydantic>=2.12,<3", "PyYAML>=6.0,<7", "mutagen>=1.47,<2", "textual>=1.0,<2"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.4,<10"]

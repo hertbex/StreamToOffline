@@ -59,6 +59,27 @@ def test_quality_rules_and_ranking_prefer_native_mp3_over_lossless():
     assert not selector.eligible(TRACK, candidate(bitrate=256), DownloadProfile.kia_ceed_ed_fl())
 
 
+def test_ranking_accepts_single_pass_iterables():
+    selected = candidate()
+    ranked = CandidateSelector().ranked(
+        TRACK, (item for item in (selected,)), DownloadProfile()
+    )
+    assert ranked == (selected,)
+
+
+def test_ranking_prefers_free_slot_and_faster_soulseek_peer():
+    slow = Candidate(
+        "soulseek", "slow.mp3", 8_000_000, 200, MediaFormat.MP3,
+        320, peer="slow", upload_speed_kbps=50, has_free_upload_slot=False,
+    )
+    fast = Candidate(
+        "soulseek", "fast.mp3", 8_000_000, 200, MediaFormat.MP3,
+        320, peer="fast", upload_speed_kbps=5000, has_free_upload_slot=True,
+    )
+    ranked = CandidateSelector().ranked(TRACK, (slow, fast), DownloadProfile())
+    assert ranked[0].peer == "fast"
+
+
 def test_duration_tolerance_can_be_disabled():
     selector = CandidateSelector()
     short = candidate(duration=180)
