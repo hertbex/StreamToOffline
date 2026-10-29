@@ -1,0 +1,19 @@
+{
+  "source": "sockseek --print-json",
+  "query": "artist=АК-47, title=В тепле 2 яйца, length=268",
+  "results": [
+    {
+      "User": {
+        "Username": "pirate_with_two_eyes",
+        "UploadSpeed": 1.5270758,
+        "HasFreeUploadSlot": true
+      },
+      "File": {
+        "Length": 268,
+        "Filename": "shared\\torrents-music\\АК-47 - Дискография (2009-2017) MP3\\2010 - МегаPolice\\02. В тепле 2 яйца (ft. QП).mp3",
+        "Size": 10914439,
+        "Bitrate": 320
+      }
+    }
+  ]
+}

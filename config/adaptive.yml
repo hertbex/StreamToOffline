@@ -1,0 +1,101 @@
+fallback: Other
+min_tracks: 3
+genre_rules:
+  - name: Metal
+    genres:
+      - metal
+      - metalcore
+      - death metal
+      - thrash metal
+      - heavy metal
+      - power metal
+      - black metal
+      - doom metal
+      - progressive metal
+      - nu metal
+      - industrial metal
+      - groove metal
+      - symphonic metal
+      - folk metal
+      - melodic death metal
+  - name: Rock
+    genres:
+      - rock
+      - punk
+      - grunge
+      - alternative rock
+      - classic rock
+      - hard rock
+      - indie rock
+      - psychedelic rock
+      - progressive rock
+      - punk rock
+      - post-punk
+      - garage rock
+      - southern rock
+      - blues rock
+      - folk rock
+      - art rock
+  - name: Hip-Hop
+    genres:
+      - hip hop
+      - rap
+      - trap
+      - boom bap
+      - grime
+      - phonk
+      - cloud rap
+      - underground hip hop
+  - name: Electronic
+    genres:
+      - house
+      - techno
+      - trance
+      - edm
+      - electro
+      - disco
+      - synth
+      - dance
+      - eurodance
+      - drum and bass
+      - dubstep
+      - breakbeat
+      - jungle
+      - ambient
+      - idm
+      - glitch
+      - downtempo
+  - name: Pop
+    genres:
+      - pop
+      - indie pop
+      - synth-pop
+      - electropop
+      - dance-pop
+      - art pop
+      - chamber pop
+      - dream pop
+  - name: R&B / Soul
+    genres:
+      - r&b
+      - soul
+      - funk
+      - jazz
+      - blues
+      - neo soul
+      - contemporary r&b
+  - name: Russian
+    genres:
+      - russian
+      - russian rock
+      - russian pop
+      - russian hip hop
+      - shanson
+      - bard
+mood_rules:
+  - name: Drive
+    condition: high_energy
+  - name: Melancholy
+    condition: low_valence
+  - name: Chill
+    condition: low_energy

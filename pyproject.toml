@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "streamtooffline"
+version = "0.1.0"
+description = "Offline music library builder with Soulseek and optional YouTube fallback"
+requires-python = ">=3.11"
+dependencies = ["yt-dlp==2026.10.26", "pydantic>=2.12,<3", "PyYAML>=6.0,<7", "mutagen>=1.47,<2"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.4,<10"]
+
+[project.scripts]
+streamtooffline = "streamtooffline.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/streamtooffline"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

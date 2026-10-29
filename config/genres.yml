@@ -1,0 +1,415 @@
+buckets:
+- name: 01_Rus_Rap_OldSchool
+  artists:
+  - 1.Kla$
+  - 25/17
+  - 4К
+  - 9 Gramm
+  - AK-47
+  - Anacondaz
+  - Assai
+  - Bad Balance
+  - Basta
+  - Brutto
+  - COMEDOZ
+  - Centr
+  - Cheba
+  - Detsl aka Le Truk
+  - Dolphin
+  - Dominick Jocker
+  - Face2Face
+  - Faktor2
+  - GUF
+  - Jahmal TGK
+  - Kaspiyskiy Gruz
+  - Kasta
+  - Krovostok
+  - Luperkal
+  - Military Clan
+  - Mnogotochie
+  - N1NT3ND0
+  - NTL
+  - Nigativ
+  - Noggano
+  - Noize MC
+  - Nurminsky
+  - Panoramick
+  - Parnishka
+  - Pika
+  - Rem Digga
+  - SLIMUS
+  - ST
+  - ST1M
+  - Schokk
+  - Seryoga
+  - Slovetskii
+  - Smoky Mo
+  - Stolny Grad
+  - Syava
+  - TRUEten
+  - The Chemodan
+  - Tony-Gun
+  - Triada
+  - Triagrutrika
+  - Vadyara Blues
+  - Vanich
+  - Vitya AK
+  - Vostochny Okrug
+  - White Hot Ice
+  - YARMAK
+  - Zanuda
+  - domiNo
+  - Бабангида
+  - Банд'Эрос
+  - Белые Братья
+  - Брутто
+  - ГРОТ
+  - Городская тоска
+  - Ежемесячные
+  - Жаман
+  - Капа
+  - Легальный бизне$$
+  - Лигалайз
+  - Лёша Маэстро
+  - Ліон
+  - Мальчишник
+  - Местный
+  - Район Моей Мечты
+  - Рем Дигга
+  - Руслан Утюг
+  - Руставели
+  - Рычаги Машин
+  - Рычаги машин
+  - Сэт
+  - Таймер
+  - Типичный Ритм
+  - УННВ
+  - ЧБ
+  - Чёрная экономика
+  - Энди Картрайт
+  - Ю.Г.
+  - рэ.прэса
+- name: 02_Rus_Rap_NewSchool
+  artists:
+  - 10AGE
+  - ASHAN
+  - ATL
+  - Antoha MC
+  - Artem Dogma
+  - BAbyBoi
+  - Big Baby Tape
+  - Cali
+  - DK
+  - Dzharakhov
+  - Egor Kreed
+  - Egor Nats
+  - Eldzhey
+  - Endspiel
+  - Enrasta
+  - Erika Lundmoen
+  - FACE
+  - FEDUK
+  - FLESH, LIZER
+  - GAZIROVKA
+  - GONE.Fludd
+  - GOODY
+  - Geegun
+  - Icegergert
+  - Imanbek
+  - JILLZAY
+  - Jah Khalib
+  - Kristina Si
+  - LOVELYDILLER
+  - LSP
+  - Lesha Svik
+  - Lizer
+  - MATRANG
+  - MC Khovansky
+  - MORGENSHTERN
+  - Malbec
+  - Markul
+  - Maryana Ro
+  - Max Korzh
+  - May Wave$
+  - MiyaGi & Endspiel
+  - Nuttkase
+  - Oxxxymiron
+  - PHARAOH
+  - Pavel Volya
+  - RASA
+  - ROCKET
+  - Rauf & Faik
+  - SLAVA MARLOW
+  - Scroodgee
+  - Skryptonite
+  - Strange
+  - T-Fest
+  - TERRY
+  - THRILL PILL
+  - The Limba
+  - Tima Belorusskih
+  - Timati
+  - Айки
+  - Грибы
+  - МОТ
+  - Марьяна Ро
+  - Мц Горемыка
+  - Мэйби Бэйби
+  - ФОГЕЛЬ
+- name: 03_Rus_Rock_Punk
+  artists:
+  - 7B
+  - Agatha Christie
+  - Alyans
+  - Animal Jazz
+  - Atlantida Project
+  - Auktyon
+  - BAH.ROMA
+  - Boombox
+  - Doodle
+  - Drug Твоей Тёлки
+  - Gorod 312
+  - Grechka
+  - Green Grey
+  - IC3PEAK
+  - Igor Talkov
+  - Kino
+  - Korol i Shut
+  - Krematorij
+  - Kukryniksy
+  - Leningrad
+  - Leprikonsy
+  - Louna
+  - Lyapis Trubetskoy
+  - MILKOVSKYI
+  - MUKKA
+  - Masha i Medvedi
+  - Mashina Vremeni
+  - Mumiy Troll
+  - Naik Borzov
+  - Nautilus Pompilius
+  - Nervy
+  - Okean Elzy
+  - Piknik
+  - Pornofilmy
+  - Poshlaya Molly
+  - RSAC
+  - Sektor Gaza
+  - Sergey Shnurov
+  - Smyslovye Gallyutsinatsii
+  - Splean
+  - Tantsy Minus
+  - Timur Mutsurayev
+  - UMA2RMAN
+  - Valentin Strykalo
+  - Vyacheslav Butusov
+  - Zemfira
+  - Zemlyane
+  - Zhuki
+  - Zveri
+  - '[Би-2]'
+  - blackwater
+  - micheff
+  - sad and depressed cunt
+  - Алихан Амхадов
+  - ДДТ
+  - Джизус
+  - Дора
+  - Ислам Идигов
+  - КИССКОЛД
+  - Кипелов
+  - Мэйклав
+  - Мёртвые Дельфины
+  - Папин Олимпос
+  - Последний Бал Наташи Ростовой
+  - Республика Полина
+  - Сплин
+  - Тимерболат
+  - Тимур Муцураев
+  - ФРЕНДЗОНА
+  - ФРИК ПАТИ
+  - Чиж & Co
+  - кис-кис
+  - лиззка
+- name: 04_Rus_Pop_Retro
+  artists:
+  - Aidamir Mugu
+  - Akula
+  - Aleksandr Ivanov
+  - Alexey Vorobyov
+  - Alla Pugacheva
+  - Alsou
+  - Andrey Gubin
+  - Anzhelika Varum
+  - Artem Kacher
+  - Artem Pivovarov
+  - Arthur Pirozhkov
+  - Bely Oryol
+  - Blestyashchiye
+  - Bravo
+  - Charusha
+  - Chay Vdvoyom
+  - Denis Klyaver
+  - Diana Arbenina
+  - Dima Bilan
+  - Diskoteka Avariya
+  - Dmitry Malikov
+  - Elektroklub
+  - Elena Vaenga
+  - Eva Polna
+  - Fabrika
+  - Gamora
+  - Gio Pika
+  - Goryachiy Shokolad
+  - Gosti iz Budushchego
+  - Gradusy
+  - Igor Sklyar
+  - Irakli
+  - Irina Allegrova
+  - Ivanushki International
+  - Janna Friske
+  - Klava Koka
+  - Kombinaciya
+  - Korni
+  - Kraski
+  - Kravz
+  - Leonid Agutin
+  - Linda
+  - Lolita
+  - MAX BARSKIH
+  - MakSim
+  - Mikhail Boyarskiy
+  - Mikhail Krug
+  - Mikhey and Jumanji
+  - Misha Mavashi
+  - Monetochka
+  - Moya Mishel
+  - Murat Nasyrov
+  - Murat Thagalegov
+  - Naitivihod
+  - Natali
+  - Natalya Vetlitskaya
+  - Nensi
+  - Nepara
+  - Oksana Kovalevskaya
+  - Otpetye Moshenniki
+  - Philipp Kirkorov
+  - Polumyagkiye
+  - Propaganda
+  - QP
+  - Ruki Vverh!
+  - Ruslan Nabiyev
+  - SEREBRO
+  - Sergey Lazarev
+  - Sevara Nazarkhan
+  - Shura
+  - Siuzanna
+  - Sladkiy Son
+  - Slava
+  - Stas Kostyushkin
+  - Stas Mikhaylov
+  - Stas Piekha
+  - Strelki
+  - Sveta
+  - TGK
+  - Tatiana Bulanova
+  - Tatiana Ovsienko
+  - Technology
+  - VIA Gra
+  - Valeriya
+  - Valery Leontiev
+  - Valery Meladze
+  - Vera Brezhneva
+  - Verka Serduchka
+  - VibeTGK
+  - Victoria Dayneko
+  - Vintage
+  - Virus
+  - Vladimir Presnyakov
+  - Vlady
+  - Vremya i Steklo
+  - Yolka
+  - Yuri Shatunov
+  - t.A.T.u.
+  cyrillic: true
+- name: 05_NuMetal_Alt_Core
+  genres:
+  - nu metal
+  - metalcore
+  - alternative metal
+  - rap metal
+  - screamo
+  - emo
+  - post-grunge
+  - industrial metal
+  - trap metal
+  - alternative rock
+  - rap rock
+  - grunge
+  - hardcore
+  - pop punk
+  - punk
+- name: 07_Classic_Rock_70s_80s
+  genres:
+  - classic rock
+  - yacht rock
+  - southern rock
+  - psychedelic rock
+  - art rock
+  - blues rock
+  - rock and roll
+  - glam rock
+  - soft rock
+  - heartland rock
+  - country rock
+  - folk rock
+  - progressive rock
+  - funk rock
+- name: 06_Heavy_Thrash_Metal
+  genres:
+  - heavy metal
+  - thrash metal
+  - power metal
+  - speed metal
+  - melodic death metal
+  - folk metal
+  - progressive metal
+  - symphonic metal
+  - groove metal
+  - metal
+  - glam metal
+- name: 08_Foreign_HipHop_Rap
+  genres:
+  - hip hop
+  - rap
+  - g-funk
+  - trap
+  - boom bap
+  - crunk
+  - r&b
+  - grime
+  - phonk
+- name: 09_Electronic_Dance_Drive
+  genres:
+  - house
+  - techno
+  - trance
+  - edm
+  - electro
+  - disco
+  - synth
+  - dance
+  - eurodance
+  - europop
+  - big beat
+  - drum and bass
+  - jungle
+  - breakbeat
+  - dubstep
+  - club
+mood:
+  chill_max_energy: 0.45
+  drive_min_energy: 0.72
+  chill: 10_Funk_Soul_Chill_Vibe
+  drive: 09_Electronic_Dance_Drive
+fallback: 10_Other
